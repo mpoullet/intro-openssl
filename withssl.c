@@ -18,7 +18,7 @@ int main() {
   OpenSSL_add_all_algorithms();
 
   /* Set up the SSL context */
-  SSL_CTX* ctx = SSL_CTX_new(SSLv23_client_method());
+  SSL_CTX* ctx = SSL_CTX_new(TLSv1_2_method());
 
   /* Load the trust store */
   if (!SSL_CTX_load_verify_locations(ctx, "TrustStore.pem", NULL)) {
