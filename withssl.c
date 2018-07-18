@@ -6,12 +6,6 @@
 #include "string.h"
 
 int main() {
-  BIO* bio;
-  SSL* ssl;
-  SSL_CTX* ctx;
-
-  int p;
-
   // clang-format off
   char * request = "GET / HTTP/1.1\x0D\x0AHost: www.verisign.com\x0D\x0A\x43onnection: Close\x0D\x0A\x0D\x0A";
   // clang-format on
@@ -24,7 +18,7 @@ int main() {
   OpenSSL_add_all_algorithms();
 
   /* Set up the SSL context */
-  ctx = SSL_CTX_new(SSLv23_client_method());
+  SSL_CTX* ctx = SSL_CTX_new(SSLv23_client_method());
 
   /* Load the trust store */
   if (!SSL_CTX_load_verify_locations(ctx, "TrustStore.pem", NULL)) {
@@ -35,9 +29,10 @@ int main() {
   }
 
   /* Setup the connection */
-  bio = BIO_new_ssl_connect(ctx);
+  BIO* bio = BIO_new_ssl_connect(ctx);
 
   /* Set the SSL_MODE_AUTO_RETRY flag */
+  SSL* ssl;
   BIO_get_ssl(bio, &ssl);
   SSL_set_mode(ssl, SSL_MODE_AUTO_RETRY);
 
@@ -66,7 +61,7 @@ int main() {
 
   /* Read in the response */
   for (;;) {
-    p = BIO_read(bio, r, 1023);
+    int p = BIO_read(bio, r, 1023);
     if (p <= 0) break;
     r[p] = 0;
     printf("%s", r);

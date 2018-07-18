@@ -6,9 +6,6 @@
 #include "string.h"
 
 int main() {
-  BIO* bio;
-  int p;
-
   // clang-format off
   char * request = "GET / HTTP/1.1\x0D\x0AHost: www.verisign.com\x0D\x0A\x43onnection: Close\x0D\x0A\x0D\x0A";
   // clang-format on
@@ -20,7 +17,7 @@ int main() {
   OpenSSL_add_all_algorithms();
 
   /* Create and setup the connection */
-  bio = BIO_new_connect("www.verisign.com:80");
+  BIO* bio = BIO_new_connect("www.verisign.com:80");
   if (bio == NULL) {
     printf("BIO is null\n");
     return -1;
@@ -37,7 +34,7 @@ int main() {
 
   /* Read in the response */
   for (;;) {
-    p = BIO_read(bio, r, 1023);
+    int p = BIO_read(bio, r, 1023);
     if (p <= 0) break;
     r[p] = 0;
     printf("%s", r);
