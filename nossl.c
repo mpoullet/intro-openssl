@@ -14,29 +14,29 @@ int main()
     char r[1024];
 
     /* Set up the library */
-
     ERR_load_BIO_strings();
     SSL_load_error_strings();
     OpenSSL_add_all_algorithms();
 
     /* Create and setup the connection */
-
     bio = BIO_new_connect("www.verisign.com:80");
-    if(bio == NULL) { printf("BIO is null\n"); return; }
+    if(bio == NULL)
+    {
+        printf("BIO is null\n");
+        return -1;
+    }
 
     if(BIO_do_connect(bio) <= 0)
     {
         ERR_print_errors_fp(stderr);
         BIO_free_all(bio);
-        return;
+        return -2;
     }
 
     /* Send the request */
-
     BIO_write(bio, request, strlen(request));
 
     /* Read in the response */
-
     for(;;)
     {
         p = BIO_read(bio, r, 1023);
@@ -46,7 +46,7 @@ int main()
     }
 
     /* Close the connection and free the context */
-
     BIO_free_all(bio);
     return 0;
 }
+
