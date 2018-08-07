@@ -6,9 +6,10 @@ LDLIBS += -lssl -lcrypto
 
 withssl: withssl.o
 nossl: nossl.o
+handshake: handshake.o
 
 .PHONY: all
-all: withssl nossl
+all: withssl nossl handshake
 
 .PHONY: clean
 clean:
