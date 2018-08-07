@@ -6,15 +6,11 @@
 #include "string.h"
 
 int main() {
-  // clang-format off
-  char * request = "GET / HTTP/1.1\x0D\x0AHost: www.verisign.com\x0D\x0A\x43onnection: Close\x0D\x0A\x0D\x0A";
-  // clang-format on
-  char r[1024];
-
   /* Set up the library */
   SSL_library_init();
   SSL_load_error_strings();
   ERR_load_BIO_strings();
+  ERR_load_crypto_strings();
   OpenSSL_add_all_algorithms();
 
   /* Set up the SSL context */
@@ -37,7 +33,8 @@ int main() {
   SSL_set_mode(ssl, SSL_MODE_AUTO_RETRY);
 
   /* Create and setup the connection */
-  BIO_set_conn_hostname(bio, "www.verisign.com:https");
+  BIO_set_conn_hostname(bio, "embeddedassistant.googleapis.com:https");
+  BIO_set_conn_port(bio, "443");
 
   if (BIO_do_connect(bio) <= 0) {
     fprintf(stderr, "Error attempting to connect\n");
@@ -57,9 +54,10 @@ int main() {
   }
 
   /* Send the request */
-  BIO_write(bio, request, strlen(request));
+  BIO_puts(bio, "GET / HTTP/1.1\n\n");
 
   /* Read in the response */
+  char r[1024];
   for (;;) {
     int p = BIO_read(bio, r, 1023);
     if (p <= 0) break;
